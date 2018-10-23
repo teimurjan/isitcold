@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="location_font_size">24sp</dimen>
+    <dimen name="today_degree_font_size">64sp</dimen>
+    <dimen name="today_info_margin">10dp</dimen>
+    <dimen name="forecast_item_height">50dp</dimen>
+    <dimen name="forecast_item_icon_size">30dp</dimen>
+    <dimen name="forecast_item_degree_padding">10dp</dimen>
+    <dimen name="forecast_item_padding">10dp</dimen>
+    <dimen name="forecast_item_margin">5dp</dimen>
+    <dimen name="forecast_item_image_margin">40dp</dimen>
+</resources>

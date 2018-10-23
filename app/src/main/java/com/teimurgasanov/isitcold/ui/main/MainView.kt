@@ -7,6 +7,7 @@ interface MainView : BaseView {
     fun startLoading()
     fun finishLoading()
     fun updateForecast(forecasts: List<ForecastItemViewModel>)
-    fun showErrorToast(errorType: ErrorTypes)
+    fun showError(errorType: ErrorTypes)
+    fun showPermissionLostDialog()
     fun setCity(city: String)
 }

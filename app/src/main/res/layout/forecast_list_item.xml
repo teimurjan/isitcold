@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/forecast_item_height"
+    android:layout_margin="@dimen/forecast_item_margin">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/forecastItem"
+        android:padding="@dimen/forecast_item_padding"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/dayText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/forecastItemText"
+            android:gravity="center"
+            tools:text="Sunday" />
+
+        <ImageView
+            android:id="@+id/weatherIconDay"
+            android:layout_width="@dimen/forecast_item_icon_size"
+            android:layout_height="@dimen/forecast_item_icon_size"
+            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/degreeTextDay"
+            android:layout_marginEnd="@dimen/forecast_item_image_margin"
+            android:contentDescription="@string/forecast_image_description" />
+
+        <TextView
+            android:id="@+id/degreeTextDay"
+            android:paddingStart="@dimen/forecast_item_degree_padding"
+            android:paddingEnd="@dimen/forecast_item_degree_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/degreeTextNight"
+            android:gravity="center"
+            android:textColor="@color/forecastItemText"
+            android:textStyle="bold"
+            tools:text="33 C" />
+
+        <TextView
+            android:id="@+id/degreeTextNight"
+            android:paddingStart="@dimen/forecast_item_degree_padding"
+            android:paddingEnd="@dimen/forecast_item_degree_padding"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:textColor="@color/forecastItemText"
+            android:textStyle="bold"
+            tools:text="33 C" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

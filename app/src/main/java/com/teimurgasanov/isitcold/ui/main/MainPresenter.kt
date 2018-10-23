@@ -26,19 +26,19 @@ class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
     lateinit var api: OpenWeatherAPI
 
 
-    private fun getForecastForSevenDays(cityName: String) {
+    private fun getForecast(cityName: String, days: Int) {
         view.startLoading()
-        api.getForecast(cityName, 7).enqueue(object : Callback<ForecastResponse> {
+        api.getForecast(cityName, days).enqueue(object : Callback<ForecastResponse> {
 
             override fun onResponse(call: Call<ForecastResponse>, response: Response<ForecastResponse>) {
                 response.body()?.let {
                     createListForView(it)
                     view.finishLoading()
-                } ?: view.showErrorToast(ErrorTypes.NO_RESULT_FOUND)
+                } ?: view.showError(ErrorTypes.NO_RESULT_FOUND)
             }
 
             override fun onFailure(call: Call<ForecastResponse>?, t: Throwable) {
-                view.showErrorToast(ErrorTypes.CALL_ERROR)
+                view.showError(ErrorTypes.CALL_ERROR)
                 t.printStackTrace()
             }
         })
@@ -58,7 +58,7 @@ class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
         view.updateForecast(forecasts)
     }
 
-    fun requestLocationPermission() {
+    private fun requestLocationPermission() {
         val context = view.getContext()
         val coarseStatus = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION);
         if (coarseStatus != PackageManager.PERMISSION_GRANTED) {
@@ -66,11 +66,13 @@ class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     ACCESS_COARSE_LOCATION_CODE
             )
+        } else {
+            getLocationWithForecast()
         }
     }
 
     @SuppressLint("MissingPermission")
-    fun getLocationWithForecast() {
+    private fun getLocationWithForecast() {
         val context = view.getContext()
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient.lastLocation
@@ -84,7 +86,7 @@ class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
                         }
                     }
                     view.setCity(city)
-                    getForecastForSevenDays(city)
+                    getForecast(city, 10)
                 }
     }
 
@@ -98,6 +100,9 @@ class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
             ACCESS_COARSE_LOCATION_CODE -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     getLocationWithForecast()
+                } else {
+                    view.showPermissionLostDialog()
+                    view.showError(ErrorTypes.NO_RESULT_FOUND)
                 }
             }
         }

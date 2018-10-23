@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Is it cold?</string>
+    <string name="error_common">Something went wrong.</string>
+    <string name="no_results">Can\'t find a forecast for your location.</string>
+    <string name="forecast_image_description">Weather icon</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="permission_missed_title">Permission is missed</string>
+    <string name="permission_missed_description">This app needs location services to detect where you are from. You can enable them in settings.</string>
+    <string name="search_hint">Search for another location</string>
+</resources>
