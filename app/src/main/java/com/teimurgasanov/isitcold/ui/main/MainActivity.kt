@@ -5,6 +5,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
@@ -24,6 +25,7 @@ class MainActivity : BaseActivity<MainPresenter>(), MainView {
     private lateinit var location: TextView
     private lateinit var todayDegree: TextView
     private lateinit var todayDescription: TextView
+    private lateinit var refreshLayout: SwipeRefreshLayout
 
 
     private var errorMsgOf = mapOf(
@@ -42,6 +44,10 @@ class MainActivity : BaseActivity<MainPresenter>(), MainView {
         this.location = findViewById(R.id.location)
         this.todayDegree = findViewById(R.id.todayDegree)
         this.todayDescription = findViewById(R.id.todayDescription)
+        this.refreshLayout = findViewById(R.id.mainScreen)
+        this.refreshLayout.setOnRefreshListener {
+            presenter.onRefresh()
+        }
 
         initializeForecastList()
         presenter.onCreate()
@@ -58,12 +64,13 @@ class MainActivity : BaseActivity<MainPresenter>(), MainView {
     override fun startLoading() {
         forecast.visibility = View.GONE
         error.visibility = View.GONE
-        spinner.visibility = View.VISIBLE;
+        refreshLayout.isRefreshing = true
     }
 
     override fun finishLoading() {
         forecast.visibility = View.VISIBLE
-        spinner.visibility = View.GONE;
+        spinner.visibility = View.GONE
+        refreshLayout.isRefreshing = false
     }
 
     override fun updateForecast(forecasts: List<ForecastItemViewModel>) {

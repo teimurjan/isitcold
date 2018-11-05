@@ -18,7 +18,7 @@ import java.util.*
 import javax.inject.Inject
 
 
-const val DEFAULT_CITY = "London"
+const val DEFAULT_CITY = "Bishkek"
 const val ACCESS_COARSE_LOCATION_CODE = 101
 
 class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
@@ -92,6 +92,10 @@ class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
 
     fun onCreate() {
         requestLocationPermission()
+        getLocationWithForecast()
+    }
+
+    fun onRefresh() {
         getLocationWithForecast()
     }
 

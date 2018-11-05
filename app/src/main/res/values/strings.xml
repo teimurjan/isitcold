@@ -8,4 +8,5 @@
     <string name="permission_missed_title">Permission is missed</string>
     <string name="permission_missed_description">This app needs location services to detect where you are from. You can enable them in settings.</string>
     <string name="search_hint">Search for another location</string>
+    <string name="menu_refresh">Refresh</string>
 </resources>
