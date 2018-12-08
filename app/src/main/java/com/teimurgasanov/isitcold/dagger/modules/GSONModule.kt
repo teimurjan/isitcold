@@ -7,10 +7,8 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class GSONModule {
+class GsonModule {
     @Provides
     @Singleton
-    fun provide(): Gson {
-        return GsonBuilder().create()
-    }
+    fun provideGson(): Gson = GsonBuilder().create()
 }

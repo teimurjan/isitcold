@@ -2,6 +2,7 @@ package com.teimurgasanov.isitcold.ui.main
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
@@ -24,21 +25,27 @@ const val ACCESS_COARSE_LOCATION_CODE = 101
 class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
     @Inject
     lateinit var api: OpenWeatherAPI
+    @Inject
+    lateinit var prefs: SharedPreferences
 
 
-    private fun getForecast(cityName: String, days: Int) {
+    fun getForecast(cityName: String, days: Int, onSuccess: (() -> Unit)? = null) {
         view.startLoading()
         api.getForecast(cityName, days).enqueue(object : Callback<ForecastResponse> {
-
             override fun onResponse(call: Call<ForecastResponse>, response: Response<ForecastResponse>) {
+                view.finishLoading()
                 response.body()?.let {
                     createListForView(it)
-                    view.finishLoading()
+                    view.setCity(cityName)
+                    if (onSuccess != null) {
+                        onSuccess()
+                    }
                 } ?: view.showError(ErrorTypes.NO_RESULT_FOUND)
             }
 
             override fun onFailure(call: Call<ForecastResponse>?, t: Throwable) {
                 view.showError(ErrorTypes.CALL_ERROR)
+                view.finishLoading()
                 t.printStackTrace()
             }
         })
@@ -58,7 +65,7 @@ class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
         view.updateForecast(forecasts)
     }
 
-    private fun requestLocationPermission() {
+    private fun requestLocationPermission(): Boolean {
         val context = view.getContext()
         val coarseStatus = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION);
         if (coarseStatus != PackageManager.PERMISSION_GRANTED) {
@@ -66,44 +73,56 @@ class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     ACCESS_COARSE_LOCATION_CODE
             )
-        } else {
-            getLocationWithForecast()
+            return false
         }
+        return true
+    }
+
+    private fun getForecastByLocation(l: Location?) {
+        var city = DEFAULT_CITY
+        if (l != null) {
+            val gcd = Geocoder(view.getContext(), Locale.getDefault())
+            val addresses = gcd.getFromLocation(l.latitude, l.longitude, 1)
+            if (addresses.size > 0) {
+                city = addresses[0].locality
+            }
+        }
+        getForecast(city, 10)
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLocationWithForecast() {
+    private fun getLocation(onSuccess: (Location) -> Unit) {
         val context = view.getContext()
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.lastLocation
-                .addOnSuccessListener { l: Location? ->
-                    var city = DEFAULT_CITY
-                    if (l != null) {
-                        val gcd = Geocoder(context, Locale.getDefault())
-                        val addresses = gcd.getFromLocation(l.latitude, l.longitude, 1)
-                        if (addresses.size > 0) {
-                            city = addresses[0].locality
-                        }
-                    }
-                    view.setCity(city)
-                    getForecast(city, 10)
-                }
+        fusedLocationClient.lastLocation.addOnSuccessListener(onSuccess)
     }
 
     fun onCreate() {
-        requestLocationPermission()
-        getLocationWithForecast()
+        val isPermissionGiven = requestLocationPermission()
+        val city = this.prefs.getString("city", null);
+        if (isPermissionGiven && city == null) {
+            getLocation { l: Location? -> getForecastByLocation(l) }
+        } else if (city != null) {
+            this.getForecast(city, 10)
+        }
+
     }
 
     fun onRefresh() {
-        getLocationWithForecast()
+        val isPermissionGiven = requestLocationPermission()
+        val city = this.prefs.getString("city", null);
+        if (isPermissionGiven && city == null) {
+            getLocation { l: Location? -> getForecastByLocation(l) }
+        } else if (city != null) {
+            this.getForecast(city, 10)
+        }
     }
 
     fun onRequestPermissionsResult(code: Int, grantResults: IntArray) {
         when (code) {
             ACCESS_COARSE_LOCATION_CODE -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    getLocationWithForecast()
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getLocation { l: Location? -> getForecastByLocation(l) }
                 } else {
                     view.showPermissionLostDialog()
                     view.showError(ErrorTypes.NO_RESULT_FOUND)

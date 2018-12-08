@@ -10,6 +10,6 @@ interface OpenWeatherAPI {
     fun getForecast(@Query("q") city: String, @Query("cnt") days: Int): Call<ForecastResponse>
 
     companion object {
-        const val BASE_URL = "http://api.openweathermap.org/data/2.5/"
+        const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
     }
 }

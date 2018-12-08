@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.teimurgasanov.isitcold.R
 import com.teimurgasanov.isitcold.ui.base.BaseActivity
@@ -129,11 +130,25 @@ class MainActivity : BaseActivity<MainPresenter>(), MainView {
             maxWidth = Integer.MAX_VALUE
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
             setIconifiedByDefault(false)
+
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextChange(newText: String): Boolean {
+                    return false
+                }
+
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    presenter.getForecast(query, 10) {
+                        presenter.prefs.edit().putString("city", query).apply()
+                    }
+                    return false
+                }
+
+            })
+
         }
 
         return true
     }
-
 
     override fun setCity(city: String) {
         location.text = city

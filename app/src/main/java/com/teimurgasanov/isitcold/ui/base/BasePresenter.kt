@@ -1,8 +1,9 @@
 package com.teimurgasanov.isitcold.ui.base
 
-import com.teimurgasanov.isitcold.dagger.components.OpenWeatherAPIComponent
-import com.teimurgasanov.isitcold.dagger.components.DaggerOpenWeatherAPIComponent
+import com.teimurgasanov.isitcold.dagger.components.DaggerPresenterComponent
+import com.teimurgasanov.isitcold.dagger.components.PresenterComponent
 import com.teimurgasanov.isitcold.dagger.modules.OpenWeatherAPIModule
+import com.teimurgasanov.isitcold.dagger.modules.SharedPreferencesModule
 import com.teimurgasanov.isitcold.ui.main.MainPresenter
 
 /**
@@ -14,11 +15,13 @@ import com.teimurgasanov.isitcold.ui.main.MainPresenter
  * @constructor Injects the required dependencies
  */
 abstract class BasePresenter<out V : BaseView>(protected val view: V) {
-    private val component: OpenWeatherAPIComponent = DaggerOpenWeatherAPIComponent
+    private val component: PresenterComponent = DaggerPresenterComponent
             .builder()
             .baseView(view)
-            .networkModule(OpenWeatherAPIModule)
+            .apiModule(OpenWeatherAPIModule)
+            .prefsModule(SharedPreferencesModule(view.getContext()))
             .build()
+
 
     init {
         inject()
@@ -27,6 +30,7 @@ abstract class BasePresenter<out V : BaseView>(protected val view: V) {
     private fun inject() {
         when (this) {
             is MainPresenter -> component.inject(this)
+
         }
     }
 }

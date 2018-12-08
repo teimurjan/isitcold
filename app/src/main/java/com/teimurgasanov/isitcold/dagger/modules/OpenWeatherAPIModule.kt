@@ -11,11 +11,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 
-@Module(includes = [(GSONModule::class)])
+@Module(includes = [(GsonModule::class)])
 object OpenWeatherAPIModule {
     @Provides
     @Singleton
-    fun provide(gson: Gson): OpenWeatherAPI {
+    fun provideOpenWeatherAPI(gson: Gson): OpenWeatherAPI {
         val apiClient = OkHttpClient.Builder().addInterceptor(OpenWeatherInterceptor()).build()
         return Retrofit
                 .Builder()
