@@ -78,7 +78,7 @@ class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
         return true
     }
 
-    private fun getForecastByLocation(l: Location?) {
+    fun getForecastByLocation(l: Location?) {
         var city = DEFAULT_CITY
         if (l != null) {
             val gcd = Geocoder(view.getContext(), Locale.getDefault())
@@ -91,7 +91,7 @@ class MainPresenter(view: MainView) : BasePresenter<MainView>(view) {
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLocation(onSuccess: (Location) -> Unit) {
+    fun getLocation(onSuccess: (Location) -> Unit) {
         val context = view.getContext()
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient.lastLocation.addOnSuccessListener(onSuccess)

@@ -3,6 +3,7 @@ package com.teimurgasanov.isitcold.ui.main
 import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
+import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.widget.SwipeRefreshLayout
@@ -27,6 +28,7 @@ class MainActivity : BaseActivity<MainPresenter>(), MainView {
     private lateinit var todayDegree: TextView
     private lateinit var todayDescription: TextView
     private lateinit var refreshLayout: SwipeRefreshLayout
+    private lateinit var useMyLocationBtn: Button
 
 
     private var errorMsgOf = mapOf(
@@ -48,6 +50,10 @@ class MainActivity : BaseActivity<MainPresenter>(), MainView {
         this.refreshLayout = findViewById(R.id.mainScreen)
         this.refreshLayout.setOnRefreshListener {
             presenter.onRefresh()
+        }
+        this.useMyLocationBtn = findViewById(R.id.useMyLocationButton)
+        this.useMyLocationBtn.setOnClickListener {
+            presenter.getLocation { l: Location? -> presenter.getForecastByLocation(l) }
         }
 
         initializeForecastList()
